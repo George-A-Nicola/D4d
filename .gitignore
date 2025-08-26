@@ -1,0 +1,44 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Production build
+/.next/
+/out/
+/dist/
+
+# Environment variables
+.env*
+!.env.example
+
+# Debug logs
+*.log
+npm-debug.log*
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Next.js build output
+.next
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary folders
+tmp/
+temp/
+
+# Cache directories
+.cache
+.parcel-cache
+
+# Local Netlify folder
+.netlify
