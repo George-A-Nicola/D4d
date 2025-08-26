@@ -1,10 +1,11 @@
-// file: src/components/ui/input.tsx
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
+// Basic input component with consistent styling and focus states
+// Includes file input styling and proper disabled states
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (

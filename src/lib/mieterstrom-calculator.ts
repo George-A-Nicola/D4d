@@ -1,5 +1,3 @@
-// file: src/lib/mieterstrom-calculator.ts
-
 export interface MieterstromInputs {
   roofSize: number; // m²
   apartments: number;
