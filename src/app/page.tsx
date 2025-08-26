@@ -91,48 +91,155 @@ export default function MieterstromCalculatorPage() {
             </Card>
           </div>
 
-          {/* Calculator Section */}
-          <div className="grid lg:grid-cols-2 gap-8">
-            
-            {/* Input Form */}
-            <div>
-              <MieterstromForm onCalculate={handleCalculate} />
-              {showResults && (
-                <div className="mt-4">
-                  <Button 
-                    onClick={handleReset} 
-                    variant="outline" 
-                    className="w-full"
-                  >
-                    Calculate Another Project
-                  </Button>
-                </div>
-              )}
+          {/* Calculator Section - Consistent Layout */}
+          <div className="space-y-8">
+            {/* Top Row: Always maintain Project Details + Profitability Analysis side-by-side */}
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Input Form */}
+              <div>
+                <MieterstromForm onCalculate={handleCalculate} />
+                {showResults && (
+                  <div className="mt-4">
+                    <Button 
+                      onClick={handleReset} 
+                      variant="outline" 
+                      className="w-full"
+                    >
+                      Calculate Another Project
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Profitability Analysis Area */}
+              <div>
+                {!showResults ? (
+                  // Results Placeholder
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Zap className="h-5 w-5" />
+                        <span>Profitability Analysis</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center py-12">
+                        <Calculator className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray-500">
+                          Enter your project details to see the profitability analysis
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  // Investment Summary + Revenue Sources (stacked in right column)
+                  <div className="space-y-6">
+                    {/* Investment Summary */}
+                    <Card className={`border-2 ${results && results.roi > 0 && results.paybackPeriod < 25 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <Zap className={`h-5 w-5 ${results && results.roi > 0 && results.paybackPeriod < 25 ? 'text-green-600' : 'text-yellow-600'}`} />
+                          <span>Investment Summary</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-gray-900">
+                              {results ? `€${Math.round(results.totalInvestment).toLocaleString()}` : '€0'}
+                            </div>
+                            <div className="text-sm text-gray-600">Total Investment</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-green-600">
+                              {results ? `${results.roi.toFixed(1)}%` : '0%'}
+                            </div>
+                            <div className="text-sm text-gray-600">Annual ROI</div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <div className="text-center">
+                            <div className="text-lg font-semibold text-gray-900">
+                              Payback Period: {results && results.paybackPeriod === Infinity ? '∞' : `${results?.paybackPeriod || 0} years`}
+                            </div>
+                          </div>
+                        </div>
+
+                        {results && results.roi > 0 && results.paybackPeriod < 25 ? (
+                          <div className="mt-4 p-3 bg-green-100 border border-green-200 rounded-md">
+                            <p className="text-sm text-green-800 text-center font-medium">
+                              ✅ This project appears financially viable with a {results.roi.toFixed(1)}% annual return
+                            </p>
+                          </div>
+                        ) : results ? (
+                          <div className="mt-4 p-3 bg-yellow-100 border border-yellow-200 rounded-md">
+                            <p className="text-sm text-yellow-800 text-center font-medium">
+                              ⚠️ Consider optimizing the project parameters for better returns
+                            </p>
+                          </div>
+                        ) : null}
+                      </CardContent>
+                    </Card>
+
+                    {/* Revenue Sources */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Revenue Sources</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-gray-600">Tenant Electricity Sales</span>
+                              <span className="font-medium">€{results ? Math.round(results.internalRevenue).toLocaleString() : '0'}</span>
+                            </div>
+                            <div className="text-xs text-gray-500 mb-2">35% of production sold to tenants at €0.30/kWh</div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                              <div 
+                                className="bg-green-600 h-3 rounded-full flex items-center justify-center" 
+                                style={{ 
+                                  width: results ? `${(results.internalRevenue / results.totalAnnualRevenue) * 100}%` : '0%'
+                                }}
+                              >
+                                <span className="text-xs text-white font-medium">
+                                  {results ? Math.round((results.internalRevenue / results.totalAnnualRevenue) * 100) : 0}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-gray-600">Grid Feed-in Revenue</span>
+                              <span className="font-medium">€{results ? Math.round(results.feedInRevenue).toLocaleString() : '0'}</span>
+                            </div>
+                            <div className="text-xs text-gray-500 mb-2">65% of production fed into grid at €0.08/kWh</div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                              <div 
+                                className="bg-blue-600 h-3 rounded-full flex items-center justify-center" 
+                                style={{ 
+                                  width: results ? `${(results.feedInRevenue / results.totalAnnualRevenue) * 100}%` : '0%'
+                                }}
+                              >
+                                <span className="text-xs text-white font-medium">
+                                  {results ? Math.round((results.feedInRevenue / results.totalAnnualRevenue) * 100) : 0}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Results */}
-            <div>
-              {showResults && results ? (
-                <MieterstromResults results={results} />
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Zap className="h-5 w-5" />
-                      <span>Profitability Analysis</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Calculator className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">
-                        Enter your project details to see the profitability analysis
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+            {/* Additional Results Sections - Only show when results exist */}
+            {showResults && results && (
+              <MieterstromResults results={results} />
+            )}
           </div>
 
           {/* Assumptions */}
@@ -171,7 +278,7 @@ export default function MieterstromCalculatorPage() {
       <footer className="bg-white border-t mt-16">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-gray-500 text-sm">
-            Mieterstrom Profitability Calculator - Estimates for planning purposes only
+            Mieterstrom Profitability Calculator - D4D
           </p>
         </div>
       </footer>

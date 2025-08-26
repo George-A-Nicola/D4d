@@ -89,7 +89,7 @@ export function MieterstromForm({ onCalculate }: MieterstromFormProps) {
               id="roofSize"
               type="number"
               min="1"
-              step="1"
+              step="any"
               placeholder="e.g., 200"
               value={inputs.roofSize}
               onChange={(e) => handleInputChange('roofSize', e.target.value)}
@@ -105,7 +105,7 @@ export function MieterstromForm({ onCalculate }: MieterstromFormProps) {
               id="apartments"
               type="number"
               min="1"
-              step="1"
+              step="any"
               placeholder="e.g., 12"
               value={inputs.apartments}
               onChange={(e) => handleInputChange('apartments', e.target.value)}
@@ -121,7 +121,7 @@ export function MieterstromForm({ onCalculate }: MieterstromFormProps) {
               id="annualDemand"
               type="number"
               min="1"
-              step="100"
+              step="any"
               placeholder="e.g., 48000"
               value={inputs.annualDemand}
               onChange={(e) => handleInputChange('annualDemand', e.target.value)}
